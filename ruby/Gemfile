@@ -1,0 +1,9 @@
+source 'https://rubygems.org'
+
+group :development do
+  gem 'racc', '1.7.3'
+  gem 'rspec'
+  gem 'rubycritic', require: false
+  gem "rake"
+  gem "rubocop"
+end
