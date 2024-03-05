@@ -14,6 +14,7 @@ class Item
   end
 end
 
+# General class
 class General < Item
   def calc
     @sell_in -= 1
@@ -24,6 +25,7 @@ class General < Item
   end
 end
 
+# Aged Brie
 class AgedBrie < Item
   def calc
     @sell_in -= 1
@@ -34,6 +36,7 @@ class AgedBrie < Item
   end
 end
 
+# Backstage passes to a TAFKAL80ETC concert
 class Backstage < Item
   def calc
     @sell_in -= 1
@@ -47,6 +50,8 @@ class Backstage < Item
   end
 end
 
+
+# Conjured Mana Cake class
 class Conjured < Item
   def calc
     @sell_in -= 1
@@ -74,14 +79,14 @@ class GildedRose
 
   def update_quality()
     @items.each_with_index do |item, idx|
-      instance = klass_for(item.name, item.sell_in, item.quality)
+      instance = GildedRose.klass_for(item.name, item.sell_in, item.quality)
       instance.calc
       @items[idx] = instance
     end
     @items
   end
 
-  def klass_for(name, sell_in, quality)
+  def self.klass_for(name, sell_in, quality)
     (SPECIALIZED_CLASS[name] || DEFAULT_CLASS).new(name, sell_in, quality)
   end
 end
