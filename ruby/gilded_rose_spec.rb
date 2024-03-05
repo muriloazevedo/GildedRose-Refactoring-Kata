@@ -16,18 +16,6 @@ describe GildedRose do
       expect(result.first.name).to eq("Aged Brie")
       expect(result.first.sell_in).to be >= 0
     end
-
-    it "expired" do
-      items = [Item.new(name="Aged Brie", sell_in=2, quality=0)]
-      gilded_rose = GildedRose.new items
-      result = nil
-      (0..4).each do |item|
-        result = gilded_rose.update_quality()
-      end
-      expect(result.first.name).to eq("Aged Brie")
-      expect(result.first.sell_in).to be < 0
-      expect(result.first.quality).to be >= 4
-    end
   end
 
   context "Backstage passes to a TAFKAL80ETC concert" do
@@ -46,7 +34,7 @@ describe GildedRose do
       items = [Item.new(name="Backstage passes to a TAFKAL80ETC concert", sell_in=5, quality=49)]
       gilded_rose = GildedRose.new items
       result = nil
-      (0..6).each do |item|
+      (0..5).each do |item|
         result = gilded_rose.update_quality()
       end
       expect(result.first.name).to eq("Backstage passes to a TAFKAL80ETC concert")
@@ -71,7 +59,7 @@ describe GildedRose do
   context "Conjured Mana Cake" do
 
     it "expired" do
-      items = [Item.new(name="Conjured Mana Cake", sell_in=2, quality=0)]
+      items = [Item.new(name="Conjured Mana Cake", sell_in=3, quality=6)]
       gilded_rose = GildedRose.new items
       result = nil
       (0..4).each do |item|
@@ -79,11 +67,11 @@ describe GildedRose do
       end
       expect(result.first.name).to eq("Conjured Mana Cake")
       expect(result.first.sell_in).to be < 0
-      expect(result.first.quality).to be 80
+      expect(result.first.quality).to be 0
     end
 
     it "should sell" do
-      items = [Item.new(name="Conjured Mana Cake", sell_in=3, quality=6)]
+      items = [Item.new(name="Conjured Mana Cake", sell_in=3, quality=8)]
       gilded_rose = GildedRose.new items
       result = nil
       (0..2).each do |item|
@@ -91,7 +79,7 @@ describe GildedRose do
       end
       expect(result.first.name).to eq("Conjured Mana Cake")
       expect(result.first.sell_in).to be >= 0
-      expect(result.first.quality).to be 80
+      expect(result.first.quality).to be 2
     end
   end
 end

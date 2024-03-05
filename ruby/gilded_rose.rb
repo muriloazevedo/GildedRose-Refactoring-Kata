@@ -1,57 +1,4 @@
-class GildedRose
-
-  def initialize(items)
-    @items = items
-  end
-
-  def update_quality()
-    @items.each do |item|
-      if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert"
-        if item.quality > 0
-          if item.name != "Sulfuras, Hand of Ragnaros"
-            item.quality = item.quality - 1
-          end
-        end
-      else
-        if item.quality < 50
-          item.quality = item.quality + 1
-          if item.name == "Backstage passes to a TAFKAL80ETC concert"
-            if item.sell_in < 11
-              if item.quality < 50
-                item.quality = item.quality + 1
-              end
-            end
-            if item.sell_in < 6
-              if item.quality < 50
-                item.quality = item.quality + 1
-              end
-            end
-          end
-        end
-      end
-      if item.name != "Sulfuras, Hand of Ragnaros"
-        item.sell_in = item.sell_in - 1
-      end
-      if item.sell_in < 0
-        if item.name != "Aged Brie"
-          if item.name != "Backstage passes to a TAFKAL80ETC concert"
-            if item.quality > 0
-              if item.name != "Sulfuras, Hand of Ragnaros"
-                item.quality = item.quality - 1
-              end
-            end
-          else
-            item.quality = item.quality - item.quality
-          end
-        else
-          if item.quality < 50
-            item.quality = item.quality + 1
-          end
-        end
-      end
-    end
-  end
-end
+MAX_QUALITY = 50
 
 class Item
   attr_accessor :name, :sell_in, :quality
@@ -64,5 +11,77 @@ class Item
 
   def to_s()
     "#{@name}, #{@sell_in}, #{@quality}"
+  end
+end
+
+class General < Item
+  def calc
+    @sell_in -= 1
+   return @quality = 0 if quality <= 0
+
+    @quality -= 1
+    @quality -= 1 if @sell_in.negative?
+  end
+end
+
+class AgedBrie < Item
+  def calc
+    @sell_in -= 1
+    return @quality == MAX_QUALITY
+
+    @quality += 1
+    @quality += 1 if item.quality <= 0
+  end
+end
+
+class Backstage < Item
+  def calc
+    @sell_in -= 1
+    
+    return @quality = 0 if @sell_in.negative?
+
+    @quality += 1
+    @quality += 1 if @sell_in < 11
+    @quality += 1 if @sell_in < 6
+    @quality = MAX_QUALITY if @quality > MAX_QUALITY
+  end
+end
+
+class Conjured < Item
+  def calc
+    @sell_in -= 1
+    return @quality = 0 if @quality <= 0
+    @quality -= 2
+  end
+end
+
+class Sulfuras < Item
+  def calc;end
+end
+
+class GildedRose
+
+  SPECIALIZED_CLASS = {
+      'Aged Brie' => AgedBrie,
+      'Backstage passes to a TAFKAL80ETC concert' => Backstage,
+      'Conjured Mana Cake' => Conjured,
+      'Sulfuras, Hand of Ragnaros' => Sulfuras
+  }
+  DEFAULT_CLASS = General
+  def initialize(items)
+    @items = items
+  end
+
+  def update_quality()
+    @items.each_with_index do |item, idx|
+      instance = klass_for(item.name, item.sell_in, item.quality)
+      instance.calc
+      @items[idx] = instance
+    end
+    @items
+  end
+
+  def klass_for(name, sell_in, quality)
+    (SPECIALIZED_CLASS[name] || DEFAULT_CLASS).new(name, sell_in, quality)
   end
 end
